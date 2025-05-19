@@ -63,7 +63,7 @@ export default function HomePage() {
 
   return (
     <div style={container}>
-      <h1 style={title}>🚚 快樂送之PCM冷鏈管理平台</h1>
+      <h1 style={title}>🚚 PhaseCool 智能調度</h1>
       <p style={subtitle}>結合科技與物流，實現智能冷能調度</p>
       <button
         style={button}
