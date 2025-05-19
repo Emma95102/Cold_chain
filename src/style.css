@@ -1,0 +1,116 @@
+nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+}
+
+nav li {
+  flex: 1 1 180px;
+  background-color: #0288d1;
+  color: white;
+  padding: 18px 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+nav li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+}
+
+nav li:hover {
+  background-color: #0277bd;
+}
+/* 全局底色、字體 */
+body {
+  background-color: #f47a31; /* 主橘色背景 */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #274239; /* 深綠色字 */
+}
+
+/* App 主容器置中 */
+#root, .app-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f6e8; /* 米白背景 */
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.15);
+}
+
+/* 標題 */
+h1, h2 {
+  font-weight: 700;
+  color: #274239;
+}
+
+/* 導覽選單 */
+nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+  margin-bottom: 25px;
+}
+nav ul li {
+  flex: 1 1 180px;
+  background-color: #274239; /* 深綠色按鈕 */
+  border-radius: 10px;
+  text-align: center;
+  padding: 15px 12px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+nav ul li:hover {
+  background-color: #1b3229;
+}
+nav ul li a {
+  color: #f9f6e8; /* 米白字 */
+  text-decoration: none;
+  display: block;
+}
+
+/* 內容區塊 */
+div[style*="max-width: 600px"] {
+  background-color: #f9f6e8; /* 米白 */
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+}
+
+/* 清單項目 */
+ul li {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* 按鈕 */
+button, .btn {
+  background-color: #f47a31; /* 橘色按鈕 */
+  border: none;
+  border-radius: 25px;
+  padding: 12px 0;
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  margin-bottom: 25px;
+  transition: background-color 0.3s ease;
+}
+button:hover, .btn:hover {
+  background-color: #c95c1a;
+}

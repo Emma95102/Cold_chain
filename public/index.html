@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>PCM 多筆碳排報表工具</title>
+  <style>
+    body { font-family: Arial; max-width: 700px; margin: 2rem auto; }
+    label, input, select { display: block; margin-top: 10px; }
+    button { margin-top: 20px; margin-right: 10px; }
+    #result, #historyBox { margin-top: 20px; padding: 1rem; background: #f2f2f2; }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <h1>PCM 模組多筆碳排計算器</h1>
+
+  <label for="vehicleId">車輛編號:</label>
+  <input id="vehicleId" type="text" />
+
+  <label for="diesel">出車燃油使用量（公升）:</label>
+  <input id="diesel" type="number" step="0.1" />
+
+  <label for="pcmType">選擇 PCM 模組:</label>
+  <select id="pcmType">
+    <option value="short">短鏈配送（4°C）</option>
+    <option value="dual">混溫倉（冷藏+冷凍）</option>
+    <option value="smart">智慧保溫箱（藥品配送）</option>
+  </select>
+
+  <button onclick="calculateEmission()">新增計算</button>
+  <button onclick="exportCSV()" id="exportBtn" style="display:none;">匯出所有紀錄 CSV</button>
+
+  <div id="result"></div>
+  <div id="historyBox" style="display:none;">
+    <h3>碳排歷史紀錄：</h3>
+    <table id="historyTable">
+      <thead>
+        <tr>
+          <th>日期</th>
+          <th>車輛</th>
+          <th>PCM 模組</th>
+          <th>柴油 (L)</th>
+          <th>柴油碳排 (kg)</th>
+          <th>PCM 電量 (kWh)</th>
+          <th>PCM 碳排 (kg)</th>
+          <th>總碳排 (kg)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const factors = {
+      diesel: 2.68,
+      electricity: 0.502
+    };
+
+    const pcmPresets = {
+      short: 6,
+      dual: 15,
+      smart: 9
+    };
+
+    let history = [];
+
+    function calculateEmission() {
+      const vehicleId = document.getElementById('vehicleId').value.trim();
+      const diesel = parseFloat(document.getElementById('diesel').value) || 0;
+      const pcmType = document.getElementById('pcmType').value;
+      const pcmEnergy = pcmPresets[pcmType];
+
+      const dieselCO2 = diesel * factors.diesel;
+      const pcmCO2 = pcmEnergy * factors.electricity;
+      const total = dieselCO2 + pcmCO2;
+
+      const record = {
+        date: new Date().toISOString().slice(0, 10),
+        vehicleId,
+        pcmType,
+        dieselLiters: diesel.toFixed(2),
+        dieselCO2: dieselCO2.toFixed(2),
+        pcmEnergy,
+        pcmCO2: pcmCO2.toFixed(2),
+        totalCO2: total.toFixed(2)
+      };
+
+      history.push(record);
+      updateResult(record);
+      updateHistoryTable();
+    }
+
+    function updateResult(data) {
+      const result = `
+        <strong>最新計算結果：</strong><br/>
+        日期：${data.date}<br/>
+        車輛：${data.vehicleId}<br/>
+        PCM 模組：${data.pcmType}<br/>
+        柴油碳排：${data.dieselCO2} kg CO₂e<br/>
+        PCM 充冷碳排（${data.pcmEnergy} kWh）：${data.pcmCO2} kg CO₂e<br/>
+        <strong>總碳排：${data.totalCO2} kg CO₂e</strong>
+      `;
+      document.getElementById('result').innerHTML = result;
+    }
+
+    function updateHistoryTable() {
+      const tbody = document.querySelector("#historyTable tbody");
+      tbody.innerHTML = "";
+      history.forEach(item => {
+        const row = `<tr>
+          <td>${item.date}</td>
+          <td>${item.vehicleId}</td>
+          <td>${item.pcmType}</td>
+          <td>${item.dieselLiters}</td>
+          <td>${item.dieselCO2}</td>
+          <td>${item.pcmEnergy}</td>
+          <td>${item.pcmCO2}</td>
+          <td>${item.totalCO2}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+      document.getElementById('historyBox').style.display = 'block';
+      document.getElementById('exportBtn').style.display = 'inline-block';
+    }
+
+    function exportCSV() {
+      if (history.length === 0) return;
+
+      const headers = [
+        "日期", "車輛編號", "PCM 模組", "柴油使用量 (L)",
+        "柴油碳排 (kg)", "PCM 電量 (kWh)",
+        "PCM 碳排 (kg)", "總碳排 (kg)"
+      ];
+
+      const rows = history.map(item => [
+        item.date,
+        item.vehicleId,
+        item.pcmType,
+        item.dieselLiters,
+        item.dieselCO2,
+        item.pcmEnergy,
+        item.pcmCO2,
+        item.totalCO2
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8,\uFEFF"
+        + headers.join(",") + "\n"
+        + rows.map(r => r.join(",")).join("\n");
+
+      const link = document.createElement("a");
+      link.setAttribute("href", encodeURI(csvContent));
+      link.setAttribute("download", `carbon_history_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

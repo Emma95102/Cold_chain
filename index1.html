@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PCM 碳排計算器</title>
+  <style>
+    body { font-family: Arial; max-width: 600px; margin: 2rem auto; }
+    label, input { display: block; margin-top: 10px; }
+    button { margin-top: 20px; }
+    #result { margin-top: 20px; padding: 1rem; background: #f2f2f2; }
+  </style>
+</head>
+<body>
+
+  <h1>PCM 模組每日碳排計算器</h1>
+
+  <label for="vehicleId">車輛編號:</label>
+  <input id="vehicleId" type="text" />
+
+  <label for="diesel">出車燃油使用量（公升）:</label>
+  <input id="diesel" type="number" step="0.1" />
+
+  <label for="pcmEnergy">PCM 預冷電力（kWh）:</label>
+  <input id="pcmEnergy" type="number" step="0.1" />
+
+  <button onclick="calculateEmission()">計算碳排放</button>
+
+  <div id="result"></div>
+
+  <script>
+    const factors = {
+      diesel: 2.68,
+      electricity: 0.502 // 台灣用電排放係數
+    };
+
+    function calculateEmission() {
+      const vehicleId = document.getElementById('vehicleId').value;
+      const diesel = parseFloat(document.getElementById('diesel').value) || 0;
+      const pcmEnergy = parseFloat(document.getElementById('pcmEnergy').value) || 0;
+
+      const dieselCO2 = diesel * factors.diesel;
+      const pcmCO2 = pcmEnergy * factors.electricity;
+      const total = dieselCO2 + pcmCO2;
+
+      const result = `
+        <strong>計算結果：</strong><br/>
+        車輛：${vehicleId}<br/>
+        柴油碳排：${dieselCO2.toFixed(2)} kg CO₂e<br/>
+        PCM 預冷碳排：${pcmCO2.toFixed(2)} kg CO₂e<br/>
+        <strong>總碳排：${total.toFixed(2)} kg CO₂e</strong>
+      `;
+      document.getElementById('result').innerHTML = result;
+    }
+  </script>
+</body>
+</html>
